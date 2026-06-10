@@ -112,6 +112,8 @@ h1 { font-size: 8vmin; color: #33691e; text-shadow: 0 2px 0 #fff; }
   object-fit: contain;
   animation: pop-in .5s cubic-bezier(.2, 1.4, .4, 1);
 }
+/* 흰 배경 JPG가 파스텔 배경에 자연스럽게 섞이도록 */
+.dino-img, .clear-dinos img { mix-blend-mode: multiply; }
 .dino-name {
   display: block;
   font-size: 2.6vmin;

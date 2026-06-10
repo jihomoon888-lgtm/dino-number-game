@@ -12,7 +12,8 @@ export function loadProgress(store = defaultStore()) {
     const raw = store.getItem(KEY);
     if (raw) {
       const data = JSON.parse(raw);
-      if (data && Array.isArray(data.stars) && data.stars.length === 3) return data;
+      if (data && Array.isArray(data.stars) && data.stars.length === 3
+          && data.stars.every((v) => Number.isInteger(v) && v >= 0 && v <= 1)) return data;
     }
   } catch (e) { /* 기본값으로 진행 */ }
   return { stars: [0, 0, 0] };

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#81c784">
+  <title>공룡알 숫자나라</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/icons/icon-192.png">
+</head>
+<body>
+  <!-- 시작 화면 -->
+  <section id="start-screen" class="screen active">
+    <h1>🦖 공룡알 숫자나라</h1>
+    <div id="stars" class="stars"></div>
+    <button id="start-btn" class="big-btn">시작!</button>
+  </section>
+
+  <!-- 게임 화면 -->
+  <section id="game-screen" class="screen">
+    <div class="target-box"><span id="target-num">1</span></div>
+    <div id="egg-field" class="egg-field"></div>
+  </section>
+
+  <!-- 클리어 화면 -->
+  <section id="clear-screen" class="screen">
+    <div class="celebrate">🎉 ⭐ 🎉</div>
+    <div id="clear-dinos" class="clear-dinos"></div>
+    <p class="praise">잘했어!</p>
+    <button id="next-btn" class="big-btn">다음 레벨</button>
+  </section>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

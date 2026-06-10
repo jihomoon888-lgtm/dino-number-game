@@ -1,0 +1,140 @@
+/* 공룡알 숫자나라 — 33개월 손가락 기준: 터치 영역 크게, 글자 크게 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  font-family: 'Malgun Gothic', sans-serif;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body { background: linear-gradient(#b3e5fc, #dcedc8); }
+
+.screen {
+  display: none;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4vmin;
+  padding: 4vmin;
+}
+.screen.active { display: flex; }
+
+h1 { font-size: 8vmin; color: #33691e; text-shadow: 0 2px 0 #fff; }
+
+.stars { font-size: 7vmin; letter-spacing: 1vmin; }
+
+.big-btn {
+  border: none;
+  background: #ff7043;
+  color: #fff;
+  font-size: 7vmin;
+  font-weight: bold;
+  font-family: inherit;
+  padding: 3vmin 10vmin;
+  border-radius: 100px;
+  box-shadow: 0 6px 0 #d84315;
+  cursor: pointer;
+}
+.big-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #d84315; }
+
+/* 게임 화면 */
+.target-box {
+  background: #fff;
+  border-radius: 4vmin;
+  padding: 1vmin 6vmin;
+  box-shadow: 0 4px 10px rgba(0,0,0,.15);
+}
+#target-num { font-size: 14vmin; font-weight: bold; color: #ff7043; }
+
+.egg-field {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 3vmin;
+  width: 100%;
+}
+
+.egg {
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 22vmin;
+  height: 28vmin;
+  position: relative;
+  font-family: inherit;
+}
+/* 알 10개(두 줄 배치)일 때는 살짝 작게 */
+.egg-field.two-rows .egg { width: 16vmin; height: 21vmin; }
+
+.egg svg { width: 100%; height: 100%; }
+.egg-num { font-size: 44px; font-weight: bold; fill: #8d6e63; }
+
+/* 오답: 도리도리 */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+.egg.wiggle { animation: wiggle .4s ease-in-out 2; }
+
+/* 힌트: 정답 알 반짝임 */
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 2vmin gold); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 5vmin orange); transform: scale(1.08); }
+}
+.egg.hint { animation: glow 1s ease-in-out infinite; }
+
+/* 부화: 거세게 흔들리며 금이 보임 */
+@keyframes hatch-shake {
+  0%, 100% { transform: rotate(0) scale(1); }
+  20% { transform: rotate(-12deg) scale(1.05); }
+  40% { transform: rotate(12deg) scale(1.05); }
+  60% { transform: rotate(-10deg) scale(1.1); }
+  80% { transform: rotate(10deg) scale(1.1); }
+}
+.egg.hatching { animation: hatch-shake .7s ease-in-out; }
+.egg.hatching .crack { opacity: 1 !important; }
+
+/* 공룡 등장 */
+@keyframes pop-in {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.dino-img, .dino-fallback {
+  width: 100%;
+  height: 75%;
+  object-fit: contain;
+  animation: pop-in .5s cubic-bezier(.2, 1.4, .4, 1);
+}
+.dino-name {
+  display: block;
+  font-size: 2.6vmin;
+  font-weight: bold;
+  color: #33691e;
+  white-space: nowrap;
+}
+
+@keyframes sparkle-fade {
+  0% { opacity: 1; transform: scale(1.4); }
+  100% { opacity: 0; transform: scale(0.6) translateY(-4vmin); }
+}
+.sparkle {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  font-size: 6vmin;
+  animation: sparkle-fade 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+/* 클리어 화면 */
+.celebrate { font-size: 12vmin; }
+.clear-dinos { display: flex; flex-wrap: wrap; justify-content: center; gap: 2vmin; }
+.clear-dinos img { width: 16vmin; height: 16vmin; object-fit: contain; }
+.praise { font-size: 7vmin; font-weight: bold; color: #e65100; }

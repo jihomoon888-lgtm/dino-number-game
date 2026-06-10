@@ -50,6 +50,6 @@ test('shuffledNumbers는 1..n의 순열을 돌려준다', () => {
 });
 
 test('shuffledNumbers는 주입한 난수 함수를 사용한다 (결정적 테스트)', () => {
-  const fixed = shuffledNumbers(3, () => 0); // rand()=0이면 항상 j=0과 스왑
-  assert.equal(fixed.length, 3);
+  // rand()=0이면 항상 j=0과 스왑: [1,2,3] → [3,2,1] → [2,3,1]
+  assert.deepEqual(shuffledNumbers(3, () => 0), [2, 3, 1]);
 });

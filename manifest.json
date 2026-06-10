@@ -1,0 +1,16 @@
+{
+  "name": "공룡알 숫자나라",
+  "short_name": "공룡숫자",
+  "description": "공룡알을 순서대로 깨면서 1~10을 배워요",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#b3e5fc",
+  "theme_color": "#81c784",
+  "lang": "ko",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

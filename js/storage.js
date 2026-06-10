@@ -2,9 +2,11 @@
 const KEY = 'dino-num-progress';
 
 function defaultStore() {
-  return typeof localStorage !== 'undefined'
-    ? localStorage
-    : { getItem: () => null, setItem: () => {} };
+  // 저장소 전면 차단 모드에선 localStorage 접근만으로 예외가 날 수 있다.
+  try {
+    if (typeof localStorage !== 'undefined') return localStorage;
+  } catch (e) { /* 아래 무동작 저장소로 폴백 */ }
+  return { getItem: () => null, setItem: () => {} };
 }
 
 export function loadProgress(store = defaultStore()) {

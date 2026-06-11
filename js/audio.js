@@ -32,41 +32,69 @@ export async function loadVoiceFiles() {
   }));
 }
 
-function tts(text) {
-  if (!('speechSynthesis' in window)) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ko-KR';
-  u.rate = 0.85;  // 아이가 따라 말할 수 있게 약간 천천히
-  u.pitch = 1.15; // 살짝 밝은 톤
-  speechSynthesis.speak(u);
+// ── 음성 채널: 한 번에 한 음성만 ──────────────────────────────
+// 새 음성이 시작되면 이전 음성(파일이든 TTS든)을 반드시 멈춘다.
+// 다음 음성은 setTimeout 추측이 아니라 실제 재생이 끝났을 때 이어진다.
+let current = null; // 지금 재생 중인 Audio
+
+function stopSpeech() {
+  if (current) {
+    current.onended = null;
+    current.pause();
+    current.currentTime = 0;
+    current = null;
+  }
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
 }
 
-function playFileOrTts(key, text) {
+function ttsAsync(text) {
+  return new Promise((resolve) => {
+    if (!('speechSynthesis' in window)) { resolve(); return; }
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ko-KR';
+    u.rate = 0.85;  // 아이가 따라 말할 수 있게 약간 천천히
+    u.pitch = 1.15; // 살짝 밝은 톤
+    u.onend = () => resolve();
+    u.onerror = () => resolve();
+    speechSynthesis.speak(u);
+  });
+}
+
+// 끝나면 resolve. 도중에 다른 음성이 끼어들어 멈춘 경우엔 resolve하지 않는다
+// — 끼어든 쪽이 말의 흐름을 이어가므로 옛 체인은 조용히 죽는 게 맞다.
+function speak(key, text) {
+  stopSpeech();
   const file = voiceFiles[key];
-  if (file) {
+  if (!file) return ttsAsync(text);
+  return new Promise((resolve) => {
+    current = file;
     file.currentTime = 0;
-    file.play().catch(() => tts(text));
-    return;
-  }
-  tts(text);
+    file.onended = () => {
+      if (current === file) current = null;
+      resolve();
+    };
+    file.play().catch(() => {
+      if (current === file) current = null;
+      ttsAsync(text).then(resolve);
+    });
+  });
 }
 
 export function sayNumber(n) {
-  playFileOrTts(`n${String(n).padStart(2, '0')}`, `${NUMBER_WORDS[n]}!`);
+  return speak(`n${String(n).padStart(2, '0')}`, `${NUMBER_WORDS[n]}!`);
 }
 
 export function sayDino(dino) {
-  playFileOrTts(dino.id, `${dino.name}!`);
+  return speak(dino.id, `${dino.name}!`);
 }
 
 export function askFor(n) {
   const word = NUMBER_WORDS[n];
-  playFileOrTts(`ask${String(n).padStart(2, '0')}`, `${word}! 찾아보세요. ${word}!`);
+  return speak(`ask${String(n).padStart(2, '0')}`, `${word}! 찾아보세요. ${word}!`);
 }
 
 export function sayPraise() {
-  playFileOrTts('praise01', '우와! 알을 다 깼다! 정말 잘했어!');
+  return speak('praise01', '우와! 알을 다 깼다! 정말 잘했어!');
 }
 
 // 알 깨지는 "뽁" 소리 (합성)

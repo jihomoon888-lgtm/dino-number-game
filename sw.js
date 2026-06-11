@@ -1,5 +1,5 @@
 // 오프라인 캐시 — 버전을 올리면 옛 캐시는 activate에서 제거된다.
-const CACHE = 'dino-num-v1';
+const CACHE = 'dino-num-v2';
 const ASSETS = [
   './',
   './index.html',

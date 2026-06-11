@@ -52,6 +52,11 @@ function onEggTap(num) {
     setTimeout(onLevelClear, 2600);
   } else {
     render.updateTarget(game.next);
+    // 부화 음성("둘! 티라노사우루스!")이 끝난 뒤 다음 숫자를 안내한다.
+    const nextNum = game.next;
+    setTimeout(() => {
+      if (game.next === nextNum && !game.cleared) audio.askFor(nextNum);
+    }, 3000);
   }
 }
 

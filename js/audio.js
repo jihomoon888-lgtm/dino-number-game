@@ -55,7 +55,8 @@ export function sayDino(name) {
 }
 
 export function askFor(n) {
-  tts(`${NUMBER_WORDS[n]}! 어디 있을까?`);
+  const word = NUMBER_WORDS[n];
+  tts(`${word}! 찾아보세요. ${word}!`);
 }
 
 export function sayPraise() {

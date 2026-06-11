@@ -21,6 +21,7 @@ function startLevel(idx) {
   levelIndex = idx;
   game = createGame(idx);
   hatchedDinos = [];
+  render.cancelReveal(); // 연출 중 레벨 전환 시 떠 있는 공룡 정리
   const numbers = shuffledNumbers(game.count);
   const dinos = pickDinos(game.count);
   dinoByNum = {};
@@ -49,15 +50,18 @@ function onEggTap(num) {
   hatchedDinos.push(dino);
   if (!r.levelClear) render.updateTarget(game.next);
 
-  // 음성 체인: "둘!" → (끝나면) "티라노사우루스!" → (끝나면) 다음 안내 또는 클리어.
-  // 고정 타이머 대신 실제 재생 종료를 기다리므로 음성이 겹치지 않는다.
+  // 부화 체인: 알 깨짐 → 공룡이 화면 가운데 크게 등장 → "둘!" → "티라노사우루스!"
+  // → 공룡이 줄어들며 제자리로 → 다음 안내 또는 클리어. 모두 실제 종료 이벤트로 이어진다.
   const chain = ++speechChain;
   const isClear = r.levelClear;
   render.hatch(num, dino, async () => {
     audio.playPop();
+    render.showDinoReveal(num, dino);
     await audio.sayNumber(num);
     if (chain !== speechChain) return; // 새 탭/레벨이 끼어들었으면 옛 체인은 종료
     await audio.sayDino(dino);
+    if (chain !== speechChain) return;
+    await render.returnDinoToEgg();
     if (chain !== speechChain) return;
     if (isClear) {
       onLevelClear();

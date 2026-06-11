@@ -151,6 +151,42 @@ h1 { font-size: 8vmin; color: #33691e; text-shadow: 0 2px 0 #fff; }
   white-space: nowrap;
 }
 
+/* 부화 공룡 크게 보여주기 오버레이 — 탭을 막지 않도록 pointer-events 없음 */
+#dino-reveal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2vmin;
+  z-index: 20;
+  pointer-events: none;
+}
+#dino-reveal.active { display: flex; }
+
+.reveal-img {
+  height: 52vmin;
+  max-width: 86vw;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 1vmin 3vmin rgba(0, 0, 0, 0.25));
+}
+.reveal-img.pop-big { animation: pop-big .55s cubic-bezier(.2, 1.4, .4, 1); }
+@keyframes pop-big {
+  0% { transform: scale(.1); }
+  65% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.reveal-name {
+  font-size: 7vmin;
+  font-weight: bold;
+  color: #33691e;
+  text-shadow: 0 2px 0 #fff, 0 0 2vmin #fff;
+  transition: opacity .3s;
+}
+
 @keyframes sparkle-fade {
   0% { opacity: 1; transform: scale(1.4); }
   100% { opacity: 0; transform: scale(0.6) translateY(-4vmin); }

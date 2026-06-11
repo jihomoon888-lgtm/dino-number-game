@@ -68,8 +68,8 @@ export function hintGlow(num) {
   eggEl(num)?.classList.add('hint');
 }
 
-// 부화 연출: 흔들림+금(0.7초) → 알 자리에 공룡 이미지 + 반짝이
-export function hatch(num, dino, onShown) {
+// 부화 연출 1단계: 흔들림+금(0.7초) → 알을 비우고 콜백 (공룡은 오버레이가 크게 보여준다)
+export function hatch(num, dino, onCracked) {
   const egg = eggEl(num);
   if (!egg) return;
   egg.classList.remove('hint', 'wiggle');
@@ -77,24 +77,112 @@ export function hatch(num, dino, onShown) {
   setTimeout(() => {
     egg.classList.remove('hatching');
     egg.innerHTML = ''; // 부화한 알 재탭은 game.js가 ignored로 처리
-
-    const sparkle = document.createElement('span');
-    sparkle.className = 'sparkle';
-    sparkle.textContent = '✨';
-
-    const img = document.createElement('img');
-    img.className = 'dino-img';
-    img.src = dino.file;
-    img.alt = dino.name;
-    img.onerror = () => img.replaceWith(fallbackDino());
-
-    const name = document.createElement('span');
-    name.className = 'dino-name';
-    name.textContent = dino.name;
-
-    egg.append(sparkle, img, name);
-    if (onShown) onShown();
+    if (onCracked) onCracked();
   }, 700);
+}
+
+// 알 자리에 작은 공룡 + 이름을 넣는다 (부화 연출의 최종 상태)
+function placeDinoInEgg(num, dino) {
+  const egg = eggEl(num);
+  if (!egg) return;
+  egg.innerHTML = '';
+
+  const sparkle = document.createElement('span');
+  sparkle.className = 'sparkle';
+  sparkle.textContent = '✨';
+
+  const img = document.createElement('img');
+  img.className = 'dino-img';
+  img.src = dino.file;
+  img.alt = dino.name;
+  img.onerror = () => img.replaceWith(fallbackDino());
+
+  const name = document.createElement('span');
+  name.className = 'dino-name';
+  name.textContent = dino.name;
+
+  egg.append(sparkle, img, name);
+}
+
+// ── 부화 공룡 크게 보여주기 ──────────────────────────────────
+let pendingReveal = null; // 화면 가운데 떠 있는 공룡 { num, dino }
+
+// 부화 연출 2단계: 공룡을 화면 가운데에 크게 등장시킨다.
+// 직전 공룡이 아직 떠 있으면(빠른 연타) 즉시 제자리로 정리한다.
+export function showDinoReveal(num, dino) {
+  if (pendingReveal) placeDinoInEgg(pendingReveal.num, pendingReveal.dino);
+  pendingReveal = { num, dino };
+
+  const overlay = document.getElementById('dino-reveal');
+  const img = overlay.querySelector('.reveal-img');
+  const name = overlay.querySelector('.reveal-name');
+  img.classList.remove('pop-big');
+  img.style.transition = 'none';
+  img.style.transform = '';
+  img.onerror = () => { // 이미지가 없으면 큰 연출 생략, 알 자리 폴백(실루엣)으로 직행
+    const p = pendingReveal;
+    cancelReveal();
+    if (p) placeDinoInEgg(p.num, p.dino);
+  };
+  img.src = dino.file;
+  img.alt = dino.name;
+  name.textContent = dino.name;
+  name.style.opacity = '';
+  overlay.classList.add('active');
+  void img.offsetWidth; // 애니메이션 재시작
+  img.classList.add('pop-big');
+}
+
+// 부화 연출 3단계: 큰 공룡이 줄어들며 자기 알 자리로 날아간다. 끝나면 resolve.
+export function returnDinoToEgg() {
+  return new Promise((resolve) => {
+    if (!pendingReveal) { resolve(); return; }
+    const mine = pendingReveal;
+    const { num, dino } = mine;
+    const overlay = document.getElementById('dino-reveal');
+    const img = overlay.querySelector('.reveal-img');
+    const egg = eggEl(num);
+
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      // 그 사이 레벨 전환(cancelReveal) 등이 끼어들었다면 배치하지 않는다
+      if (pendingReveal === mine) {
+        placeDinoInEgg(num, dino);
+        overlay.classList.remove('active');
+        img.style.transition = 'none';
+        img.style.transform = '';
+        pendingReveal = null;
+      }
+      resolve();
+    };
+
+    if (!egg) { finish(); return; }
+    const ir = img.getBoundingClientRect();
+    const er = egg.getBoundingClientRect();
+    if (!ir.width || !er.width) { finish(); return; }
+    const dx = (er.left + er.width / 2) - (ir.left + ir.width / 2);
+    const dy = (er.top + er.height / 2) - (ir.top + ir.height / 2);
+    const scale = Math.max(er.width / ir.width, 0.05);
+
+    overlay.querySelector('.reveal-name').style.opacity = '0';
+    img.classList.remove('pop-big');
+    img.style.transition = 'transform .6s cubic-bezier(.5, 0, .4, 1)';
+    img.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
+    img.addEventListener('transitionend', finish, { once: true });
+    setTimeout(finish, 750); // transitionend 미발화 대비
+  });
+}
+
+// 레벨 전환 등으로 연출을 중단해야 할 때: 오버레이만 닫는다 (알 배치는 건드리지 않음)
+export function cancelReveal() {
+  const overlay = document.getElementById('dino-reveal');
+  overlay.classList.remove('active');
+  const img = overlay.querySelector('.reveal-img');
+  img.style.transition = 'none';
+  img.style.transform = '';
+  pendingReveal = null;
 }
 
 export function showClear(dinos, hasNextLevel) {

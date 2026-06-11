@@ -1,6 +1,16 @@
 // 오프라인 캐시 — 버전을 올리면 옛 캐시는 activate에서 제거된다.
-const CACHE = 'dino-num-v2';
+const CACHE = 'dino-num-v3';
+
+// 음성 파일 키: n01~n10(숫자), ask01~ask10(안내), dino01~dino10(이름), praise01
+const VOICE_KEYS = [
+  ...Array.from({ length: 10 }, (_, i) => `n${String(i + 1).padStart(2, '0')}`),
+  ...Array.from({ length: 10 }, (_, i) => `ask${String(i + 1).padStart(2, '0')}`),
+  ...Array.from({ length: 10 }, (_, i) => `dino${String(i + 1).padStart(2, '0')}`),
+  'praise01',
+];
+
 const ASSETS = [
+  ...VOICE_KEYS.map((k) => `./assets/voice/${k}.mp3`),
   './',
   './index.html',
   './css/style.css',

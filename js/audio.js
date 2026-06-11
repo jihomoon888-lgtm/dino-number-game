@@ -17,7 +17,13 @@ export function initAudio() {
 
 // assets/voice/에 녹음 파일이 있는지 확인해서 등록 (없으면 TTS 폴백)
 export async function loadVoiceFiles() {
-  const keys = [...Array.from({ length: 10 }, (_, i) => `n${String(i + 1).padStart(2, '0')}`), 'praise01'];
+  const pad = (i) => String(i + 1).padStart(2, '0');
+  const keys = [
+    ...Array.from({ length: 10 }, (_, i) => `n${pad(i)}`),     // 숫자: "둘!"
+    ...Array.from({ length: 10 }, (_, i) => `ask${pad(i)}`),   // 안내: "둘! 찾아보세요. 둘!"
+    ...Array.from({ length: 10 }, (_, i) => `dino${pad(i)}`),  // 공룡 이름
+    'praise01',
+  ];
   await Promise.all(keys.map(async (key) => {
     try {
       const res = await fetch(`assets/voice/${key}.mp3`, { method: 'HEAD' });
@@ -50,13 +56,13 @@ export function sayNumber(n) {
   playFileOrTts(`n${String(n).padStart(2, '0')}`, `${NUMBER_WORDS[n]}!`);
 }
 
-export function sayDino(name) {
-  tts(`${name}!`);
+export function sayDino(dino) {
+  playFileOrTts(dino.id, `${dino.name}!`);
 }
 
 export function askFor(n) {
   const word = NUMBER_WORDS[n];
-  tts(`${word}! 찾아보세요. ${word}!`);
+  playFileOrTts(`ask${String(n).padStart(2, '0')}`, `${word}! 찾아보세요. ${word}!`);
 }
 
 export function sayPraise() {

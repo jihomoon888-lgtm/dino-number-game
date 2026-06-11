@@ -45,7 +45,7 @@ function onEggTap(num) {
   render.hatch(num, dino, () => {
     audio.playPop();
     audio.sayNumber(num);
-    setTimeout(() => audio.sayDino(dino.name), 900);
+    setTimeout(() => audio.sayDino(dino), 900);
   });
 
   if (r.levelClear) {

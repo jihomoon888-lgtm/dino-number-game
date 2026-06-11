@@ -36,6 +36,12 @@ export function updateTarget(n) {
   document.getElementById('target-num').textContent = n;
 }
 
+export function updateLevelNav(levelIndex) {
+  document.querySelectorAll('#level-nav button').forEach((btn) => {
+    btn.classList.toggle('current', Number(btn.dataset.level) === levelIndex);
+  });
+}
+
 export function renderEggs(numbers, onTap) {
   const field = document.getElementById('egg-field');
   field.innerHTML = '';

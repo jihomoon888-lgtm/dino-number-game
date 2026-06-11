@@ -27,6 +27,7 @@ function startLevel(idx) {
   numbers.forEach((n, i) => { dinoByNum[n] = dinos[i]; });
   render.renderEggs(numbers, onEggTap);
   render.updateTarget(1);
+  render.updateLevelNav(idx);
   render.showScreen('game-screen');
   const chain = ++speechChain;
   setTimeout(() => {
@@ -83,6 +84,14 @@ document.getElementById('start-btn').addEventListener('click', () => {
   let idx = progress.stars.indexOf(0); // 첫 미클리어 레벨부터
   if (idx === -1) idx = LEVELS.length - 1;
   startLevel(idx);
+});
+
+// 레벨 이동 버튼 (게임 화면 우측 상단) — 누르면 그 레벨을 새로 시작
+document.querySelectorAll('#level-nav button').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const idx = Number(btn.dataset.level);
+    if (idx !== levelIndex) startLevel(idx);
+  });
 });
 
 document.getElementById('next-btn').addEventListener('click', () => {

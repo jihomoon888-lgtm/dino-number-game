@@ -1,5 +1,5 @@
 // 오프라인 캐시 — 버전을 올리면 옛 캐시는 activate에서 제거된다.
-const CACHE = 'dino-num-v4';
+const CACHE = 'dino-num-v5';
 
 // 음성 파일 키: n01~n10(숫자), ask01~ask10(안내), dino01~dino10(이름), praise01
 const VOICE_KEYS = [

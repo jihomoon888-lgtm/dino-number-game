@@ -42,6 +42,35 @@ h1 { font-size: 8vmin; color: #33691e; text-shadow: 0 2px 0 #fff; }
 .big-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #d84315; }
 
 /* 게임 화면 */
+/* 레벨 이동 버튼 — 우측 상단 구석, 부모용이라 작고 은은하게 */
+.level-nav {
+  position: fixed;
+  top: 2vmin;
+  right: 2vmin;
+  display: flex;
+  gap: 1.5vmin;
+  z-index: 10;
+}
+.level-nav button {
+  width: 7vmin;
+  height: 7vmin;
+  min-width: 34px;
+  min-height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  color: #689f38;
+  font-size: 3.4vmin;
+  font-weight: bold;
+  font-family: inherit;
+  cursor: pointer;
+}
+.level-nav button.current {
+  background: #66bb6a;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
 .target-box {
   background: #fff;
   border-radius: 4vmin;
